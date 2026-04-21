@@ -1,41 +1,272 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail Route Calculator</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        label, select, button { margin: 10px 0; display: block; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lightning Rail Route Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Spectral:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Lightning Rail Route Calculator</h1>
-    <label for="start">Start:</label>
-    <select id="start" onchange="populateEndNodes()">
-        <option value="" selected disabled>Select Start City</option>
-    </select>
-    <br><br>
-    <label for="end">Destination:</label>
-    <select id="end" disabled>
-        <option value="" selected disabled>Select Destination City</option>
-    </select>
-    <br><br>
-    <button onclick="findShortestPath()">Find Route</button>
-    <br><br>
-    <div id="result"></div>
+    <div class="app">
+        <div class="app__background" aria-hidden="true"></div>
 
-    <script src="scripts.js"></script>
+        <header class="hero">
+            <div class="hero__eyebrow">House Orien Lightning Rail</div>
+            <h1 class="hero__title">Lightning Rail Route Planner</h1>
+            <p class="hero__subtitle">Design a seamless journey across Khorvaire with accurate travel times, distances, and fares for every leg of the Orien network.</p>
+            <div class="hero__badges">
+                <span class="badge">Real travel times</span>
+                <span class="badge">Fare classes compared</span>
+                <span class="badge">Optimized routes</span>
+            </div>
+        </header>
 
-    <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+        <main class="layout">
+            <section class="panel panel--form" aria-labelledby="planner-heading">
+                <div class="panel__header">
+                    <h2 id="planner-heading">Plan your journey</h2>
+                    <p>Select your departure and destination to chart the most efficient route aboard the Lightning Rail.</p>
+                </div>
+                <form id="route-form" class="form" novalidate>
+                    <div class="form__field">
+                        <label for="start">Departure city</label>
+                        <div class="select">
+                            <select id="start" name="start" aria-describedby="start-help">
+                                <option value="" disabled selected hidden>Select departure</option>
+                            </select>
+                            <span class="select__icon" aria-hidden="true"></span>
+                        </div>
+                        <p id="start-help" class="form__help">Includes Eastern and Western Orien lines.</p>
+                    </div>
+
+                    <div class="form__field">
+                        <label for="end">Arrival city</label>
+                        <div class="select">
+                            <select id="end" name="end" aria-describedby="end-help" disabled>
+                                <option value="" disabled selected hidden>Select destination</option>
+                            </select>
+                            <span class="select__icon" aria-hidden="true"></span>
+                        </div>
+                        <p id="end-help" class="form__help">Choose a departure city to reveal compatible destinations.</p>
+                    </div>
+
+                    <button type="submit" class="button" disabled>
+                        <span>Generate optimal route</span>
+                        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+                    </button>
+                </form>
+            </section>
+
+            <section class="panel panel--results" aria-labelledby="results-heading" aria-live="polite" aria-atomic="true">
+                <div class="panel__header">
+                    <h2 id="results-heading">Route overview</h2>
+                    <p>Results update instantly once a route is calculated.</p>
+                </div>
+                <div id="result" class="result result--empty">
+                    <div class="empty-state">
+                        <h3>No journey planned yet</h3>
+                        <p>Pick two cities to explore travel time, distance, and fare options for every leg of the Lightning Rail.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <aside class="insights" aria-label="Lightning Rail travel guidance">
+            <div class="insights__card">
+                <h3>Traveler tips</h3>
+                <ul>
+                    <li>Standard fare balances comfort and value across most itineraries.</li>
+                    <li>Reserve first-class cabins early on long Western routes.</li>
+                    <li>Build layovers into scenic hubs to explore Eberron's wonders.</li>
+                </ul>
+            </div>
+            <div class="insights__card">
+                <h3>Need cargo rates?</h3>
+                <p>Cargo pricing is calculated per 100 lbs for each leg&mdash;perfect for couriers and trade caravans.</p>
+            </div>
+                        </aside>
+    </div>
+
+    <a class="floating-support" href="https://ko-fi.com/ampercival" target="_blank" rel="noopener" aria-label="Tip a few CPs on Ko-fi" data-kofi-trigger>
+        <span class="floating-support__icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+    <defs>
+        <radialGradient id="coinRim" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#fff1ce" />
+            <stop offset="35%" stop-color="#efc680" />
+            <stop offset="70%" stop-color="#bb7a33" />
+            <stop offset="100%" stop-color="#693612" />
+        </radialGradient>
+        <radialGradient id="coinCore" cx="48%" cy="36%" r="54%">
+            <stop offset="0%" stop-color="#fdf2d8" />
+            <stop offset="28%" stop-color="#ddb174" />
+            <stop offset="62%" stop-color="#a36227" />
+            <stop offset="100%" stop-color="#5c2a0d" />
+        </radialGradient>
+        <linearGradient id="coinEtch" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#42210c" />
+            <stop offset="100%" stop-color="#1c0d05" />
+        </linearGradient>
+        <linearGradient id="coinGlint" x1="30%" y1="20%" x2="85%" y2="75%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.9)" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+        </linearGradient>
+        <pattern id="coinHammer" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(18)">
+            <circle cx="1.5" cy="1.5" r="0.7" fill="rgba(255,255,255,0.08)" />
+            <circle cx="4.5" cy="3" r="0.6" fill="rgba(0,0,0,0.08)" />
+        </pattern>
+        <filter id="coinShadow" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
+            <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#2b1609" flood-opacity="0.35" />
+        </filter>
+        <clipPath id="coinClip">
+            <circle cx="32" cy="32" r="25" />
+        </clipPath>
+    </defs>
+    <g filter="url(#coinShadow)">
+        <circle cx="32" cy="32" r="28" fill="url(#coinRim)" />
+        <circle cx="32" cy="32" r="23.5" fill="url(#coinCore)" stroke="rgba(255,255,255,0.28)" stroke-width="1.5" />
+        <g clip-path="url(#coinClip)">
+            <rect x="7" y="7" width="50" height="50" fill="url(#coinHammer)" opacity="0.35" />
+            <path d="M8 32c5.4-3.4 11-5.1 16.9-5.1 10.4 0 19.9 4.3 29.1 12.8" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="2.6 3.6" />
+            <path d="M12.4 21.8c4-2.6 8.7-3.9 14-3.9 9.4 0 18.2 4 26.3 12" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="3.2 4" />
+        </g>
+        <path d="M32 13l2.6 6 6.4.5-4.9 4.2 1.6 6.1-5.7-3.2-5.7 3.2 1.6-6.1-4.9-4.2 6.4-.5Z" fill="url(#coinGlint)" opacity="0.7" />
+        <path d="M19 31.8c0-6.8 4.8-12.1 12.1-12.1 3.7 0 6.9 1.2 9.2 3.6l-2.7 2.9c-1.7-1.6-3.9-2.6-6.5-2.6-5.5 0-9.2 3.8-9.2 8.2s3.7 8.2 9.2 8.2c2.5 0 4.8-.9 6.5-2.6l2.7 2.9c-2.3 2.4-5.5 3.7-9.2 3.7-7.3 0-12.1-5.2-12.1-12.2Zm21.6-10.4h3.9v9.8h2.8v3.4h-2.8v4.2h-3.9v-4.2h-4.9l-.4-.4v-2.9Zm0 13.3v-9.2l-4.9 5.6Z" fill="url(#coinEtch)" />
+    </g>
+</svg>
+        </span>
+        <span class="floating-support__label">Tip a few CPs</span>
+    </a>
+
+    <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js" defer></script>
+    <script src="scripts.js" defer></script>
     <script>
-      kofiWidgetOverlay.draw("ampercival", {
-        type: "floating-chat",
-        "floating-chat.donateButton.text": "Tip a coffee",
-        "floating-chat.donateButton.background-color": "#f5e4c3",
-        "floating-chat.donateButton.text-color": "#2e2a23",
-      });
-    </script>
+        (function () {
+            const state = {
+                ready: false,
+                donateButton: null,
+                nodes: []
+            };
 
+            function attachTrigger() {
+                const trigger = document.querySelector('[data-kofi-trigger]');
+                if (!trigger) {
+                    return;
+                }
+
+                trigger.addEventListener('click', event => {
+                    if (!state.ready || !state.donateButton) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    state.donateButton.click();
+                    requestAnimationFrame(hideAllDefaultElements);
+                    setTimeout(hideAllDefaultElements, 600);
+                });
+            }
+
+            function hideDefaultWidget(frame, wrapper, donateButton) {
+                if (wrapper) {
+                    wrapper.style.opacity = '0';
+                    wrapper.style.pointerEvents = 'none';
+                    wrapper.style.height = '0';
+                    wrapper.style.width = '0';
+                    wrapper.style.overflow = 'hidden';
+                }
+
+                if (frame) {
+                    frame.style.opacity = '0';
+                    frame.style.pointerEvents = 'none';
+                    frame.style.width = '0';
+                    frame.style.height = '0';
+                    frame.style.overflow = 'hidden';
+                }
+
+                if (donateButton) {
+                    donateButton.style.opacity = '0';
+                    donateButton.style.pointerEvents = 'none';
+                }
+            }
+
+            function hideAllDefaultElements() {
+                state.nodes.forEach(node => hideDefaultWidget(node.frame, node.wrapper, node.button));
+            }
+
+            function prepareKoFiOverlay(attempt = 0) {
+                const frames = Array.from(document.querySelectorAll('iframe.floatingchat-container, iframe.floatingchat-container-mobi'));
+
+                if (!frames.length) {
+                    if (attempt < 120) {
+                        requestAnimationFrame(() => prepareKoFiOverlay(attempt + 1));
+                    }
+                    return;
+                }
+
+                state.nodes = [];
+                let donateButton = null;
+
+                frames.forEach(frame => {
+                    const doc = frame.contentDocument || frame.contentWindow?.document;
+                    if (!doc) {
+                        return;
+                    }
+
+                    const button = doc.querySelector('.floatingchat-donate-button');
+                    if (!button) {
+                        return;
+                    }
+
+                    if (!donateButton) {
+                        donateButton = button;
+                    }
+
+                    state.nodes.push({ frame, wrapper: frame.parentElement, button });
+                });
+
+                if (!donateButton) {
+                    if (attempt < 120) {
+                        requestAnimationFrame(() => prepareKoFiOverlay(attempt + 1));
+                    }
+                    return;
+                }
+
+                state.donateButton = donateButton;
+                state.ready = true;
+                hideAllDefaultElements();
+            }
+
+            window.addEventListener('load', () => {
+                attachTrigger();
+
+                if (!window.kofiWidgetOverlay) {
+                    return;
+                }
+
+                window.kofiWidgetOverlay.draw('ampercival', {
+                    type: 'floating-chat',
+                    'floating-chat.donateButton.text': 'Tip a few CPs',
+                    'floating-chat.donateButton.background-color': 'transparent',
+                    'floating-chat.donateButton.text-color': '#e9f5ff',
+                    'floating-chat.notice.text': 'Support House Sivis'
+                });
+
+                prepareKoFiOverlay();
+            });
+        }());
+    </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
